@@ -29,18 +29,43 @@ class HtmlElement:
     def __str__(self):
         return self.__str(0)
 
+    @staticmethod
     def create(name):
         return HtmlBuilder(name)
 
 class HtmlBuilder:
     __root = HtmlElement()
 
-    def __initi__(self, root_name):
+    def __init__(self, root_name):
         self.root_name = root_name
         self.__root.name = root_name
 
+    # not fluent
     def add_child(self, child_name, child_text):
         self.__root.elements.append(HtmlElement(child_name, child_text))
 
+    # fluent
+    def add_child_fluent(self, child_name, child_text):
+        self.__root.elements.append(HtmlElement(child_name, child_text))
+        return self
+
+    def clear(self):
+        self.__root = HtmlElement(name=self.root_name)
+
     def __str__(self):
         return str(self.__root)
+
+if __name__ == '__main__':
+
+    # ordinary non-fluent builder
+    # builder = HtmlBuilder('ul')
+    builder = HtmlElement.create('ul')
+    builder.add_child('li', 'hello')
+    builder.add_child('li', 'world')
+    print(builder)
+
+    # fluent builder
+    builder.clear()
+    builder.add_child_fluent('li', 'hello').\
+        add_child_fluent('li', 'world')
+    print(builder)
